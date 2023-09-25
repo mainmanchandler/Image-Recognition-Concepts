@@ -3,7 +3,7 @@ import matplotlib, cv2
 
 
 #open the image
-camera_man = cv2.imread("Images/cameraman.tif", -1)
+camera_man = cv2.imread("cameraman.tif", -1)
 assert camera_man is not None, "Could not find the image you tried to load 'camera_man'."
 '''cv2.imshow("camera_man", camera_man)
 cv2.waitKey(0)
