@@ -194,10 +194,10 @@ cameraman_negative = negative(camera_man)
 print(cameraman_negative)
 print(cameraman_negative.shape)
 
-"""cv2.imshow("cameraman_negative", cameraman_negative)
+cv2.imshow("cameraman_negative", cameraman_negative)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-cv2.imwrite("cameraman_negative.tif", cameraman_negative)"""
+cv2.imwrite("cameraman_negative.tif", cameraman_negative)
 
 
 #
