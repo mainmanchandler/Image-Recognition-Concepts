@@ -1,5 +1,6 @@
 import numpy as np
-import matplotlib, cv2
+import matplotlib.pyplot as plt
+import cv2
 DIV = 512
 
 #------------------------------------------------------------------------------------------
@@ -191,24 +192,74 @@ def negative(matrix):
     return np.array(resultNegative)
 
 cameraman_negative = negative(camera_man)
-print(cameraman_negative)
+'''print(cameraman_negative)
 print(cameraman_negative.shape)
 
 cv2.imshow("cameraman_negative", cameraman_negative)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-cv2.imwrite("cameraman_negative.tif", cameraman_negative)
+cv2.imwrite("cameraman_negative.tif", cameraman_negative)'''
 
 
 #
 # :::: 2. Apply Power-law transformation on the image  ::::
 #
 
+def powerlaw_transformation(matrix):
+
+    resultPowerLaw = []
+
+    for i in range(len(matrix)):
+        row = matrix[i]
+        newRow = []
+        for j in range(len(row)):
+            newValue = float((row[j].item())/DIV)**0.58
+            newRow.append(newValue)
+
+        resultPowerLaw.append(newRow)
+
+    return np.array(resultPowerLaw)
+
+cameraman_power = powerlaw_transformation(camera_man)
+'''print(cameraman_power)
+print(cameraman_power.shape)
+
+cv2.imshow("cameraman_power", cameraman_power)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+cv2.imwrite("cameraman_power.tif", cameraman_power)'''
 
 #
 # :::: 3. Apply contrast stretching on the image and store the output  ::::
 #
 
+def contrast_stretching(matrix):
+    
+    resultContrastStretch = []
+
+    for i in range(len(matrix)):
+        row = matrix[i]
+        newRow = []
+        for j in range(len(row)):
+            newValue = (row[j].item()-np.min(matrix))/(np.max(matrix)-np.min(matrix))
+            newRow.append(newValue)
+
+        resultContrastStretch.append(newRow)
+    
+    return np.array(resultContrastStretch)
+
+cameraman_contrast = powerlaw_transformation(camera_man)
+'''print(cameraman_contrast)
+print(cameraman_contrast.shape)
+
+cv2.imshow("camera_man",  camera_man)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+cv2.imshow("cameraman_contrast", cameraman_contrast)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+cv2.imwrite("cameraman_contrast.tif", cameraman_contrast)'''
 
 
 
@@ -218,10 +269,105 @@ cv2.imwrite("cameraman_negative.tif", cameraman_negative)
 #
 #------------------------------------------------------------------------------------------
 
+einstein = cv2.imread("A01/einstein.tif", -1)
+assert einstein is not None, "Could not find the image you tried to load 'einstein'."
+
 #
 # :::: 1. Apply histogram equalization on the "Einstein" image and store the output  ::::
 #
 
+cv2.imshow("einstein", einstein)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+def create_histogram(matrix):
+    histogram = np.zeros(shape=(256, 1))
+
+    s = matrix.shape
+
+    for i in range(s[0]):
+        for j in range(s[1]):
+            k = matrix[i, j]
+            histogram[k, 0] = histogram[k, 0] + 1
+
+    return histogram
+
+s = einstein.shape
+einstein_histo = create_histogram(einstein)
+plt.plot(einstein_histo)
+plt.show()
+
+print("ein shape::")
+print(einstein_histo.shape)
+x = einstein_histo.reshape(1,256)
+y = np.array([])
+y = np.append(y, x[0, 0])
+
+print(x)
+print(y)
+
+for i in range(255):
+    k = x[0, i+1] + y[i]
+    y = np.append(y, k)
+
+# y = normalizing n/M*N.
+# this should give the resulting CDF in all positions.
+# multiply by all CDF values by (L-1) or 256-1
+# then round all values
+# thus creating the equilized histogram of the image 
+y = np.round((y/(s[0]*s[1]))*(256-1))
+
+for i in range(s[0]):
+    for j in range(s[1]):
+        k = einstein[i, j]
+        einstein[i,j] = y[k]
+
+cv2.imshow("einstein", einstein)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+
+def histogram_equalization(matrix):
+
+    # Create a histogram from the image, put every value in bins ranging 1-256
+    imageHistogram = np.zeros(shape=(256, 1))
+    imageShape = matrix.shape
+
+    #print(range(imageShape[0]))
+    #print(range(imageShape[1]))
+    for i in range(imageShape[0]):
+        for j in range(imageShape[1]):
+            currGreyValue = matrix[i, j]
+            #print(currGreyValue)
+            imageHistogram[currGreyValue, 0] = imageHistogram[currGreyValue, 0] + 1
+
+    #plt.plot(imageHistogram)
+    #plt.show()
+
+    #x = represents the number of pixels at a certain graylevel in bin
+    #y = represents the running total of the number of pixels at a certain greylevel (adding the previous pixels to current count)
+    #k = is the value of the running total count
+    #rounding is normalizing the histogram when y is rounded
+    #-> see formula and try to match it in the report
+
+    #the last nested loop simply updates the original image
+    #to match the new equilized value created in y
+
+    imageShape = matrix.shape
+    
+
+
+
 #
 # :::: 2. Apply histogram specification on "chest_x-ray1" iomage so it matches the histogram for "chest_x-ray2" and store the output ::::
 #
+
+
+def histogram_specification(matrix):
+
+    resultHistogramSpec = []
+    
+
+    return np.array(resultHistogramSpec)
