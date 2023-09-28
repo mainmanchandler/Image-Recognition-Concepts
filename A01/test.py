@@ -149,21 +149,37 @@ cameraman_bilinear = bilinear_interpolation(cameraman_rescaled)
 print(cameraman_bilinear.shape)
 cv2.imshow("cameraman_bilinear", cameraman_bilinear)
 cv2.waitKey(0)
-cv2.destroyAllWindows()"""
+cv2.destroyAllWindows()
 
 cv2.imwrite("cameraman_bilinear.tif", cameraman_bilinear)
+"""
+
 
 # ::: Bicubic interpolation :::
 
 def bicubic_interpolation(matrix):
-    
 
+    resultBicubic = []
+    imgDimensions = (int(matrix.shape[1])*2, int(matrix.shape[0])*2)
 
-    return
+    resultBicubic = cv2.resize(matrix, imgDimensions, interpolation=cv2.INTER_CUBIC)
+
+    return resultBicubic
+
 
 
 cameraman_bicubic = bicubic_interpolation(cameraman_rescaled)
+print(type(cameraman_bicubic))
+print(cameraman_bicubic.shape)
+cv2.imshow("camera_man", camera_man)
+cv2.imshow("cameraman_nearest", cameraman_nearest)
+cv2.imshow("cameraman_bilinear", cameraman_bilinear)
+cv2.imshow("cameraman_bicubic", cameraman_bicubic)
 
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+#cv2.imwrite("cameraman_bicubic.tif", cameraman_bicubic)
 
 
 #------------------------------------------------------------------------------------------
@@ -410,24 +426,46 @@ def histogram_specification(matrix1, matrix2):
     #print(image1Shape[1])
     #print(matrix1.shape)
     #Now map the values of the original to target image (must use the size of image 1)
-    for i in range(image1Shape[0]):
-        for j in range(image1Shape[1]):
-           """ currGreyValue = matrix1[i, j]
-            originalEqualizedValue = equalizedImage1[currGreyValue]
-            matrix1[i, j] = equalizedImage2[int(originalEqualizedValue)]"""
-           currGreyValue = matrix1[i, j]
-           matrix1[i, j] = equalizedImage1[currGreyValue]
+    matching = equalizedImage1
+    for i in range(0, 255):
+        
+        #find where val equalizedimage[i] is index wise in equalizedimage2
+        """print()
+        print("---------------------------------------------")
+        print(equalizedImage1[i])
+        print()"""
+
+        key = np.where(equalizedImage2 == equalizedImage1[i])
+        """ print("key: " + str(key))
+        print(type(key))"""
+
+        temp = equalizedImage1[i] + 1
+        while(len(key[0]) == 0 and temp <= 255):
+            key = np.where(equalizedImage2 == temp)
+            temp += 1
+
+        """print('--------------')
+        print(equalizedImage1[i])
+        print(key)
+        print(len(key[0]))
+        print(not key)
+        print(len(key))
+        print(int(key[0][0]))"""
+
+        matching[i] = int(key[0][0])
     
     for i in range(image1Shape[0]):
         for j in range(image1Shape[1]):
-           """ currGreyValue = matrix1[i, j]
-            originalEqualizedValue = equalizedImage1[currGreyValue]
-            matrix1[i, j] = equalizedImage2[int(originalEqualizedValue)]"""
-           currGreyValue = matrix1[i, j]
-           matrix1[i, j] = equalizedImage2[currGreyValue]
+            currGreyValue = matrix1[i, j]
+            matrix1[i, j] = matching[int(currGreyValue)]
 
-    plt.plot(equalizedImage2)
-    plt.show()
+        
+    
+    print(equalizedImage1)
+    print(equalizedImage2)
+    print(matching)
+    #plt.plot(equalizedImage2)
+    #plt.show()
  
     return matrix1
 
@@ -437,11 +475,14 @@ chest_xray2 = cv2.imread("A01/chest_x-ray2.jpeg", -1)
 assert chest_xray1 is not None, "Could not find the image you tried to load 'chest_xray1'."
 assert chest_xray2 is not None, "Could not find the image you tried to load 'chest_xray2'."
 
-cv2.imshow("chest_xray1", chest_xray1)
-cv2.imshow("chest_xray2", chest_xray2)
 
 chest_xray3 = histogram_specification(chest_xray1, chest_xray2)
 
+
+'''cv2.imshow("chest_xray1", chest_xray1)
+cv2.imshow("chest_xray2", chest_xray2)
 cv2.imshow("chest_xray3", chest_xray3)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+cv2.imwrite("chest_x-ray3.jpeg", chest_xray3)
+'''
