@@ -269,64 +269,9 @@ cv2.imwrite("cameraman_contrast.tif", cameraman_contrast)'''
 #
 #------------------------------------------------------------------------------------------
 
-einstein = cv2.imread("A01/einstein.tif", -1)
-assert einstein is not None, "Could not find the image you tried to load 'einstein'."
-
 #
 # :::: 1. Apply histogram equalization on the "Einstein" image and store the output  ::::
 #
-
-cv2.imshow("einstein", einstein)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-def create_histogram(matrix):
-    histogram = np.zeros(shape=(256, 1))
-
-    s = matrix.shape
-
-    for i in range(s[0]):
-        for j in range(s[1]):
-            k = matrix[i, j]
-            histogram[k, 0] = histogram[k, 0] + 1
-
-    return histogram
-
-s = einstein.shape
-einstein_histo = create_histogram(einstein)
-plt.plot(einstein_histo)
-plt.show()
-
-print("ein shape::")
-print(einstein_histo.shape)
-x = einstein_histo.reshape(1,256)
-y = np.array([])
-y = np.append(y, x[0, 0])
-
-print(x)
-print(y)
-
-for i in range(255):
-    k = x[0, i+1] + y[i]
-    y = np.append(y, k)
-
-# y = normalizing n/M*N.
-# this should give the resulting CDF in all positions.
-# multiply by all CDF values by (L-1) or 256-1
-# then round all values
-# thus creating the equilized histogram of the image 
-y = np.round((y/(s[0]*s[1]))*(256-1))
-
-for i in range(s[0]):
-    for j in range(s[1]):
-        k = einstein[i, j]
-        einstein[i,j] = y[k]
-
-cv2.imshow("einstein", einstein)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-
 
 
 def histogram_equalization(matrix):
@@ -346,28 +291,157 @@ def histogram_equalization(matrix):
     #plt.plot(imageHistogram)
     #plt.show()
 
-    #x = represents the number of pixels at a certain graylevel in bin
-    #y = represents the running total of the number of pixels at a certain greylevel (adding the previous pixels to current count)
-    #k = is the value of the running total count
-    #rounding is normalizing the histogram when y is rounded
-    #-> see formula and try to match it in the report
+    # Create the array for the equalized histogram and grab totals of gray level bin counts from original
+    pixelCountInBin = imageHistogram.reshape(1, 256)
+    equalizedHistogram = np.array([])
+    equalizedHistogram = np.append(equalizedHistogram, pixelCountInBin[0, 0]) 
+    #print(pixelCountInBin)
+    #print(equalizedHistogram)
 
-    #the last nested loop simply updates the original image
-    #to match the new equilized value created in y
-
-    imageShape = matrix.shape
+    for i in range(255):
+        runningTotal = pixelCountInBin[0, i + 1] + equalizedHistogram[i]
+        equalizedHistogram = np.append(equalizedHistogram, runningTotal)
     
+    #print(imageShape)
+    M = imageShape[0]
+    N = imageShape[1]
+
+    # Normalize all the values (P(r_k) = bin values normalized) P(r_k) = n_k / M*N
+    # Multiply resulting CDF by (L-1) (all values should already be running total so PDF = CDF off the bat)
+    # Round all of the values to the nearest int
+    equalizedHistogram = np.round((equalizedHistogram / (M * N)) * (256 - 1))
+    #print(equalizedHistogram)
+    plt.plot(equalizedHistogram)
+    plt.show()
+
+    # Apply the equalized histogram onto the original image
+    for i in range(M):
+        for j in range(N):
+            currGreyValue = matrix[i, j]
+            matrix[i, j] = equalizedHistogram[currGreyValue]
+    
+    return matrix
 
 
+einstein = cv2.imread("A01/einstein.tif", -1)
+assert einstein is not None, "Could not find the image you tried to load 'einstein'."
+
+'''cv2.imshow("einstein", einstein)
+cv2.waitKey(0)
+cv2.destroyAllWindows()'''
+
+#Einstein_equalized = histogram_equalization(einstein)
+'''cv2.imshow("Einstein_equalized", Einstein_equalized)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+cv2.imwrite("Einstein_equalized.tif", Einstein_equalized)'''
 
 #
 # :::: 2. Apply histogram specification on "chest_x-ray1" iomage so it matches the histogram for "chest_x-ray2" and store the output ::::
 #
 
 
-def histogram_specification(matrix):
+def histogram_specification(matrix1, matrix2):
 
     resultHistogramSpec = []
     
+    #Get the equalized Original and Target image
+    #originalEqualized = histogram_equalization(matrix1)
+    #targetEqualized = histogram_equalization(matrix2)
 
-    return np.array(resultHistogramSpec)
+    # Create a histogram from the original image, put every value in bins ranging 1-256
+    imageHistogram = np.zeros(shape=(256, 1))
+    image1Shape = matrix1.shape
+
+    for i in range(image1Shape[0]):
+        for j in range(image1Shape[1]):
+            currGreyValue = matrix1[i, j]
+            imageHistogram[currGreyValue, 0] = imageHistogram[currGreyValue, 0] + 1
+
+    #plt.plot(imageHistogram)
+    #plt.show()
+
+    pixelCountInBin = imageHistogram.reshape(1, 256)
+    equalizedImage1 = np.array([])
+    equalizedImage1 = np.append(equalizedImage1, pixelCountInBin[0, 0]) 
+
+    for i in range(255):
+        runningTotal = pixelCountInBin[0, i + 1] + equalizedImage1[i]
+        equalizedImage1 = np.append(equalizedImage1, runningTotal)
+    
+    M = image1Shape[0]
+    N = image1Shape[1]
+
+    equalizedImage1 = np.round((equalizedImage1 / (M * N)) * (256 - 1))
+
+
+    # Create a histogram from the target image, put every value in bins ranging 1-256
+    imageHistogram = np.zeros(shape=(256, 1))
+    image2Shape = matrix2.shape
+
+    for i in range(image2Shape[0]):
+        for j in range(image2Shape[1]):
+            currGreyValue = matrix2[i, j]
+            imageHistogram[currGreyValue, 0] = imageHistogram[currGreyValue, 0] + 1
+
+    #plt.plot(imageHistogram)
+    #plt.show()
+
+    pixelCountInBin = imageHistogram.reshape(1, 256)
+    equalizedImage2 = np.array([])
+    equalizedImage2 = np.append(equalizedImage2, pixelCountInBin[0, 0]) 
+
+
+    for i in range(255):
+        runningTotal = pixelCountInBin[0, i + 1] + equalizedImage2[i]
+        equalizedImage2 = np.append(equalizedImage2, runningTotal)
+    
+    M = image2Shape[0]
+    N = image2Shape[1]
+
+    equalizedImage2 = np.round((equalizedImage2 / (M * N)) * (256 - 1))
+
+    #plt.plot(equalizedImage1)
+    #plt.show()
+    #plt.plot(equalizedImage2)
+    #plt.show()
+    
+    #print(image1Shape[0])
+    #print(image1Shape[1])
+    #print(matrix1.shape)
+    #Now map the values of the original to target image (must use the size of image 1)
+    for i in range(image1Shape[0]):
+        for j in range(image1Shape[1]):
+           """ currGreyValue = matrix1[i, j]
+            originalEqualizedValue = equalizedImage1[currGreyValue]
+            matrix1[i, j] = equalizedImage2[int(originalEqualizedValue)]"""
+           currGreyValue = matrix1[i, j]
+           matrix1[i, j] = equalizedImage1[currGreyValue]
+    
+    for i in range(image1Shape[0]):
+        for j in range(image1Shape[1]):
+           """ currGreyValue = matrix1[i, j]
+            originalEqualizedValue = equalizedImage1[currGreyValue]
+            matrix1[i, j] = equalizedImage2[int(originalEqualizedValue)]"""
+           currGreyValue = matrix1[i, j]
+           matrix1[i, j] = equalizedImage2[currGreyValue]
+
+    plt.plot(equalizedImage2)
+    plt.show()
+ 
+    return matrix1
+
+
+chest_xray1 = cv2.imread("A01/chest_x-ray1.jpeg", -1)
+chest_xray2 = cv2.imread("A01/chest_x-ray2.jpeg", -1)
+assert chest_xray1 is not None, "Could not find the image you tried to load 'chest_xray1'."
+assert chest_xray2 is not None, "Could not find the image you tried to load 'chest_xray2'."
+
+cv2.imshow("chest_xray1", chest_xray1)
+cv2.imshow("chest_xray2", chest_xray2)
+
+chest_xray3 = histogram_specification(chest_xray1, chest_xray2)
+
+cv2.imshow("chest_xray3", chest_xray3)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
