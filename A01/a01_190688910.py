@@ -44,7 +44,7 @@ def shrinkWidthByHalf(matrix, div):
         newRow = []
         for j in range(0, len(row) - 1, 2):
             #for every pair of values, add them together and divide by image total size to get the greyscale output
-            #from 0 to 1. otherwise, no image will appear but white under testing as the image is greyscale by default(?).
+            #from 0 to 1. otherwise, no image will appear but white under testing as the image is greyscale by default.
             newValue = (row[j].item() + row[j+1].item())/div
             newRow.append(newValue)
         
@@ -59,8 +59,8 @@ def shrinkWidthByHalf(matrix, div):
 camera_man = cv2.imread("A01/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the image you tried to load 'camera_man'."
 
-'''print(camera_man.shape)
-cv2.imshow("camera_man", camera_man)
+#print(camera_man.shape)
+'''cv2.imshow("original camera_man", camera_man)
 cv2.waitKey(0)
 cv2.destroyAllWindows()'''
 
@@ -69,18 +69,21 @@ cv2.destroyAllWindows()'''
 # print(camera_man.shape)
 
 cameraman_rescaled = resizeQuarter(camera_man)
-'''print(cameraman_rescaled.shape)
-print(cameraman_rescaled)
-cv2.imshow("newIMg", cameraman_rescaled)
+#print(cameraman_rescaled.shape)
+#print(cameraman_rescaled)
+'''cv2.imshow("Small camera_man", cameraman_rescaled)
 cv2.waitKey(0)
 cv2.destroyAllWindows()'''
+cv2.imwrite("cameraman_rescaled.tif", cameraman_rescaled)
 
 
 #
 # :::: 2. Rescale the image to original size (4x) using interpolation ::::
 #
 
+#
 # ::: Nearest Neighbor :::
+#
 
 def nearest_neighbor(matrix):
     resultNearest = []
@@ -94,20 +97,22 @@ def nearest_neighbor(matrix):
         resultNearest.append(newRow)
         resultNearest.append(newRow)
 
-    return resultNearest
+    return np.array(resultNearest)
 
 
 cameraman_nearest = nearest_neighbor(cameraman_rescaled)
-cameraman_nearest = np.array(cameraman_nearest)
-'''print(type(cameraman_nearest))
-print(cameraman_nearest.shape)
-cv2.imshow("cameraman_nearest", cameraman_nearest)
+#print(type(cameraman_nearest))
+#print(cameraman_nearest.shape)
+'''cv2.imshow("cameraman_nearest", cameraman_nearest)
 cv2.waitKey(0)
 cv2.destroyAllWindows()'''
 cv2.imwrite("cameraman_nearest.tif", cameraman_nearest)
 
 
+#
 # ::: Bilinear interpolation :::
+#
+
 def bilinear_interpolation(matrix):
 
     resultBilinearWidth = []
@@ -139,23 +144,22 @@ def bilinear_interpolation(matrix):
         resultBilinear.append(below)
         
 
-    resultBilinear = np.array(resultBilinear)
     #print(resultBilinear.shape)
-    return resultBilinear
+    return np.array(resultBilinear)
 
 
 cameraman_bilinear = bilinear_interpolation(cameraman_rescaled)
-"""print(type(cameraman_bilinear))
-print(cameraman_bilinear.shape)
-cv2.imshow("cameraman_bilinear", cameraman_bilinear)
+#print(type(cameraman_bilinear))
+#print(cameraman_bilinear.shape)
+'''cv2.imshow("bilinear cameraman", cameraman_bilinear)
 cv2.waitKey(0)
-cv2.destroyAllWindows()
-
+cv2.destroyAllWindows()'''
 cv2.imwrite("cameraman_bilinear.tif", cameraman_bilinear)
-"""
 
 
+#
 # ::: Bicubic interpolation :::
+#
 
 def bicubic_interpolation(matrix):
 
@@ -169,17 +173,19 @@ def bicubic_interpolation(matrix):
 
 
 cameraman_bicubic = bicubic_interpolation(cameraman_rescaled)
-print(type(cameraman_bicubic))
-print(cameraman_bicubic.shape)
-cv2.imshow("camera_man", camera_man)
-cv2.imshow("cameraman_nearest", cameraman_nearest)
-cv2.imshow("cameraman_bilinear", cameraman_bilinear)
-cv2.imshow("cameraman_bicubic", cameraman_bicubic)
+#print(type(cameraman_bicubic))
+#print(cameraman_bicubic.shape)
+cv2.imwrite("cameraman_bicubic.tif", cameraman_bicubic)
 
+
+
+cv2.imshow("camera_man", camera_man)
+cv2.imshow("Small camera_man", cameraman_rescaled)
+cv2.imshow("nearest cameraman", cameraman_nearest)
+cv2.imshow("bilinear cameraman", cameraman_bilinear)
+cv2.imshow("bicubic cameraman", cameraman_bicubic)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-#cv2.imwrite("cameraman_bicubic.tif", cameraman_bicubic)
 
 
 #------------------------------------------------------------------------------------------
@@ -208,13 +214,9 @@ def negative(matrix):
     return np.array(resultNegative)
 
 cameraman_negative = negative(camera_man)
-'''print(cameraman_negative)
-print(cameraman_negative.shape)
-
-cv2.imshow("cameraman_negative", cameraman_negative)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-cv2.imwrite("cameraman_negative.tif", cameraman_negative)'''
+#print(cameraman_negative)
+#print(cameraman_negative.shape)
+cv2.imwrite("cameraman_negative.tif", cameraman_negative)
 
 
 #
@@ -236,14 +238,12 @@ def powerlaw_transformation(matrix):
 
     return np.array(resultPowerLaw)
 
+camera_man = cv2.imread("A01/cameraman.tif", -1)
 cameraman_power = powerlaw_transformation(camera_man)
-'''print(cameraman_power)
-print(cameraman_power.shape)
+#print(cameraman_power)
+#print(cameraman_power.shape)
+cv2.imwrite("cameraman_power.tif", cameraman_power)
 
-cv2.imshow("cameraman_power", cameraman_power)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-cv2.imwrite("cameraman_power.tif", cameraman_power)'''
 
 #
 # :::: 3. Apply contrast stretching on the image and store the output  ::::
@@ -264,18 +264,20 @@ def contrast_stretching(matrix):
     
     return np.array(resultContrastStretch)
 
-cameraman_contrast = powerlaw_transformation(camera_man)
+camera_man = cv2.imread("A01/cameraman.tif", -1)
+cameraman_contrast = contrast_stretching(camera_man)
 '''print(cameraman_contrast)
 print(cameraman_contrast.shape)
+'''
+cv2.imwrite("cameraman_contrast.tif", cameraman_contrast)
+
 
 cv2.imshow("camera_man",  camera_man)
+cv2.imshow("negative cameraman", cameraman_negative)
+cv2.imshow("power law cameraman", cameraman_power)
+cv2.imshow("contrast-stretch cameraman", cameraman_contrast)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-cv2.imshow("cameraman_contrast", cameraman_contrast)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-cv2.imwrite("cameraman_contrast.tif", cameraman_contrast)'''
 
 
 
@@ -327,8 +329,8 @@ def histogram_equalization(matrix):
     # Round all of the values to the nearest int
     equalizedHistogram = np.round((equalizedHistogram / (M * N)) * (256 - 1))
     #print(equalizedHistogram)
-    plt.plot(equalizedHistogram)
-    plt.show()
+    #plt.plot(equalizedHistogram)
+    #plt.show()
 
     # Apply the equalized histogram onto the original image
     for i in range(M):
@@ -342,15 +344,12 @@ def histogram_equalization(matrix):
 einstein = cv2.imread("A01/einstein.tif", -1)
 assert einstein is not None, "Could not find the image you tried to load 'einstein'."
 
-'''cv2.imshow("einstein", einstein)
-cv2.waitKey(0)
-cv2.destroyAllWindows()'''
-
-#Einstein_equalized = histogram_equalization(einstein)
-'''cv2.imshow("Einstein_equalized", Einstein_equalized)
+cv2.imshow("einstein", einstein)
+Einstein_equalized = histogram_equalization(einstein)
+cv2.imshow("equalized Einstein", Einstein_equalized)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-cv2.imwrite("Einstein_equalized.tif", Einstein_equalized)'''
+cv2.imwrite("Einstein_equalized.tif", Einstein_equalized)
 
 #
 # :::: 2. Apply histogram specification on "chest_x-ray1" iomage so it matches the histogram for "chest_x-ray2" and store the output ::::
@@ -461,9 +460,9 @@ def histogram_specification(matrix1, matrix2):
 
         
     
-    print(equalizedImage1)
-    print(equalizedImage2)
-    print(matching)
+    #print(equalizedImage1)
+    #print(equalizedImage2)
+    #print(matching)
     #plt.plot(equalizedImage2)
     #plt.show()
  
@@ -475,14 +474,12 @@ chest_xray2 = cv2.imread("A01/chest_x-ray2.jpeg", -1)
 assert chest_xray1 is not None, "Could not find the image you tried to load 'chest_xray1'."
 assert chest_xray2 is not None, "Could not find the image you tried to load 'chest_xray2'."
 
+cv2.imshow("chest_xray1", chest_xray1)
+cv2.imshow("chest_xray2", chest_xray2)
 
 chest_xray3 = histogram_specification(chest_xray1, chest_xray2)
 
-
-'''cv2.imshow("chest_xray1", chest_xray1)
-cv2.imshow("chest_xray2", chest_xray2)
 cv2.imshow("chest_xray3", chest_xray3)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 cv2.imwrite("chest_x-ray3.jpeg", chest_xray3)
-'''
