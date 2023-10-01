@@ -357,14 +357,12 @@ cv2.imwrite("Einstein_equalized.tif", Einstein_equalized)
 
 
 def histogram_specification(matrix1, matrix2):
-
-    resultHistogramSpec = []
     
     #Get the equalized Original and Target image
     #originalEqualized = histogram_equalization(matrix1)
     #targetEqualized = histogram_equalization(matrix2)
 
-    # Create a histogram from the original image, put every value in bins ranging 1-256
+    # Create a histogram from the original image
     imageHistogram = np.zeros(shape=(256, 1))
     image1Shape = matrix1.shape
 
@@ -405,7 +403,6 @@ def histogram_specification(matrix1, matrix2):
     pixelCountInBin = imageHistogram.reshape(1, 256)
     equalizedImage2 = np.array([])
     equalizedImage2 = np.append(equalizedImage2, pixelCountInBin[0, 0]) 
-
 
     for i in range(255):
         runningTotal = pixelCountInBin[0, i + 1] + equalizedImage2[i]
@@ -458,8 +455,6 @@ def histogram_specification(matrix1, matrix2):
             currGreyValue = matrix1[i, j]
             matrix1[i, j] = matching[int(currGreyValue)]
 
-        
-    
     #print(equalizedImage1)
     #print(equalizedImage2)
     #print(matching)
