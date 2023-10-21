@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2
 import math
 import random
@@ -14,9 +13,9 @@ DIV = 255
 
 #Implement from scratch the convolution operations for:
 
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
-#cv2.imshow("Original Cameraman", camera_man)
+cv2.imshow("Original Cameraman", camera_man)
 #print(camera_man.shape)
 
 ####################################################################################################################################################
@@ -28,7 +27,6 @@ def average_smoothing_filter(matrix):
     resultAverage = []
     #print(matrix.shape)
     m, n = matrix.shape
-
 
     for i in range(len(matrix)):
         row = matrix[i]
@@ -53,7 +51,6 @@ def average_smoothing_filter(matrix):
                     #print(average)
 
                     newRow.append(average)
-            
 
             resultAverage.append(newRow)
 
@@ -63,17 +60,17 @@ def average_smoothing_filter(matrix):
 
 avg_smooth_cameraman = average_smoothing_filter(np.array(camera_man))
 #print(avg_smooth_cameraman.shape)
-#cv2.imshow("Smoothed Cameraman", avg_smooth_cameraman)
+cv2.imshow("T1a Smoothed Cameraman", avg_smooth_cameraman)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
-#cv2.imwrite("Average Smooth Filter Cameraman", avg_smooth_cameraman)
+cv2.imwrite("t1a.tif", avg_smooth_cameraman)
 
 
 
 ####################################################################################################################################################
 # b. A Gaussian smoothing filter (filter size: 7*7, sigma = 1, mean = 0)                                                                           #
 ####################################################################################################################################################
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
 
 def create_gaussian_value(m, n):
@@ -98,7 +95,6 @@ def gaussian_smoothing(matrix, gaussian_filter):
     #print(matrix.shape)
     m, n = matrix.shape
 
-
     for i in range(len(matrix)):
         row = matrix[i]
         newRow = []
@@ -122,43 +118,33 @@ def gaussian_smoothing(matrix, gaussian_filter):
                     
                     #print(gaussian_filter)
                     value *= gaussian_filter
-                    #print(average)
-
                     newRow.append(np.sum(value)/DIV)
-                    
-                        
-                    #newRow.append(average)
             
-
             resultAverage.append(newRow)
 
     #print(resultAverage)
-
     return np.array(resultAverage)
 
 gaussian_filter = create_gaussian_filter(7, 7) # 7*7
 gaussian_smooth_cameraman = gaussian_smoothing(np.array(camera_man), gaussian_filter)
 #print(gaussian_smooth_cameraman.shape)
-#cv2.imshow("Guassian Cameraman", gaussian_smooth_cameraman)
+cv2.imshow("T1b Guassian Cameraman", gaussian_smooth_cameraman)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
-
+cv2.imwrite("t1b.tif", gaussian_smooth_cameraman)
 
 ####################################################################################################################################################
 # c.The sobel sharpening filter (filter size: 3*3, both horizontal and vertical)                                                                   #
 ####################################################################################################################################################
 
-SOBEL_HORIZ = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]
-SOBEL_VERT = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
-
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
 
 def sobel_sharpening(matrix):
+
     resultSobel = []
     #print(matrix.shape)
     m, n = matrix.shape
-
 
     for i in range(len(matrix)):
         row = matrix[i]
@@ -195,10 +181,10 @@ def sobel_sharpening(matrix):
 
 
 sobel_cameraman = sobel_sharpening(np.array(camera_man))
-#cv2.imshow("Guassian Cameraman", sobel_cameraman)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
-
+cv2.imshow("T1c Sobel Cameraman", sobel_cameraman)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+cv2.imwrite("t1c.tif", sobel_cameraman)
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -212,30 +198,30 @@ sobel_cameraman = sobel_sharpening(np.array(camera_man))
 ####################################################################################################################################################
 
 # https://docs.opencv.org/4.x/d4/d13/tutorial_py_filtering.html
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
 
 avg_blur_cameraman = cv2.blur(camera_man, ksize=(3, 3))
 
-#cv2.imshow("Average BuiltIn Cameraman", avg_blur_cameraman)
+cv2.imshow("T2a Average BuiltIn Cameraman", avg_blur_cameraman)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
-
+cv2.imwrite("t2a.tif", avg_blur_cameraman)
 
 
 ####################################################################################################################################################
 # b. A Gaussian smoothing filter (filter size: 7*7, sigma = 1, mean = 0)                                                                           #
 ####################################################################################################################################################
 
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
 
 guassian_blur_cameraman = cv2.GaussianBlur(camera_man, ksize=(7, 7), sigmaX=1)
 
-#cv2.imshow("Gaussian BuiltIn Cameraman", guassian_blur_cameraman)
+cv2.imshow("T2b Gaussian BuiltIn Cameraman", guassian_blur_cameraman)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
-
+cv2.imwrite("t2b.tif", guassian_blur_cameraman)
 
 ####################################################################################################################################################
 # c.The sobel sharpening filter (filter size: 3*3, both horizontal and vertical)                                                                   #
@@ -244,11 +230,8 @@ guassian_blur_cameraman = cv2.GaussianBlur(camera_man, ksize=(7, 7), sigmaX=1)
 #https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html#gacea54f142e81b6758cb6f375ce782c8d
 #https://docs.opencv.org/3.4/d2/de8/group__core__array.html#ga3460e9c9f37b563ab9dd550c4d8c4e7d
 
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
-
-# Failed attempt: it seems you need to do horiz & vert and combine like above
-# sobel_filter_cameraman = cv2.Sobel(camera_man, cv2.CV_64F, 1, 1, None, 3)
 
 horizontal = sobel_filter_cameraman = cv2.Sobel(camera_man, ddepth=cv2.CV_64F, dx=1, dy=0, dst=None, ksize=3)
 vertical = sobel_filter_cameraman = cv2.Sobel(camera_man, ddepth=cv2.CV_64F, dx=0, dy=1, dst=None, ksize=3)
@@ -257,10 +240,10 @@ combineX = cv2.convertScaleAbs(src=horizontal)
 combineY = cv2.convertScaleAbs(src=vertical)
 sobel_filter_cameraman = cv2.addWeighted(src1=combineX, alpha=0.5, src2=combineY, beta=0.5, gamma=0)
 
-#cv2.imshow("Sobel BuiltIn Cameraman", sobel_filter_cameraman)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
-
+cv2.imshow("T2c Sobel BuiltIn Cameraman", sobel_filter_cameraman)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+cv2.imwrite("t2c.tif", sobel_filter_cameraman)
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -273,7 +256,7 @@ sobel_filter_cameraman = cv2.addWeighted(src1=combineX, alpha=0.5, src2=combineY
 # a. Marr-Hildreth Edge Detector                                                                                                                   #
 ####################################################################################################################################################
 
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
 
 # Algorithm:
@@ -287,35 +270,43 @@ laplacian_of_gaussian = cv2.Laplacian(gaussian_filter, cv2.CV_64F)
 # Normalize into a 255 range
 get_absolute_laplacian = cv2.convertScaleAbs(src=laplacian_of_gaussian)
 min, max, _, _ = cv2.minMaxLoc(get_absolute_laplacian)
-zero_crossings = ((255 * (get_absolute_laplacian - min)) / (max - min)) / DIV
+zero_crossing = ((255 * (get_absolute_laplacian - min)) / (max - min)) / DIV
 
 # Apply the threshold to get the final result, the more you increase the threshold, the more exaggerated the edges
-marr_Hildreth_edge_detection = cv2.threshold(np.uint8(zero_crossings*DIV), 40, 255, type=cv2.THRESH_BINARY)[1]
+marr_Hildreth_edge_detection = cv2.threshold(np.uint8(zero_crossing * DIV), 40, 255, type=cv2.THRESH_BINARY)[1]
 
-#cv2.imshow("Zero_crossings BuiltIn Cameraman", zero_crossings)
-#cv2.imshow("Marr-Hildreth BuiltIn Cameraman", marr_Hildreth_edge_detection)
+#cv2.imshow("Zero_crossings BuiltIn Cameraman", zero_crossing)
+kernel_to_dilate = [[1,1,1],[1,1,1],[1,1,1]]
+kernel_to_dilate = np.array(kernel_to_dilate, np.uint8)
+dilated_edges_of_Hildreth = cv2.dilate(marr_Hildreth_edge_detection, kernel_to_dilate, iterations=1)
+
+cv2.imshow("T3a Marr-Hildreth BuiltIn Cameraman", marr_Hildreth_edge_detection)
+cv2.imshow("T3a+ Marr-Hildreth Dilated BuiltIn Cameraman", dilated_edges_of_Hildreth)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
-
+cv2.imwrite("t3a.tif", marr_Hildreth_edge_detection)
 
 ####################################################################################################################################################
 # b. Canny Edge Dectector                                                                                                                          #
 ####################################################################################################################################################
 
-camera_man = cv2.imread("A01/cameraman.tif", -1)
+camera_man = cv2.imread("A02/cameraman.tif", -1)
 assert camera_man is not None, "Could not find the cameraman image."
 
 #https://docs.opencv.org/4.x/da/d22/tutorial_py_canny.html
 #threshold 1 and threshold 2 decides which of the edges are "really" edges (openCV)
-canny_edge_detection = cv2.Canny(camera_man, threshold1=120, threshold2=180)
-kernel = np.ones((2, 2), np.uint8)
-dilated_edges = cv2.dilate(canny_edge_detection, kernel, iterations=1)
 
-cv2.imshow("Canny BuiltIn Cameraman", canny_edge_detection)
-cv2.imshow("Canny Dilated BuiltIn Cameraman", dilated_edges)
+canny_edge_detection = cv2.Canny(camera_man, threshold1=120, threshold2=180)
+
+kernel_to_dilate = [[1,1,1],[1,1,1],[1,1,1]]
+kernel_to_dilate = np.array(kernel_to_dilate, np.uint8)
+dilated_edges_of_Canny = cv2.dilate(canny_edge_detection, kernel_to_dilate, iterations=1)
+
+cv2.imshow("T3b Canny BuiltIn Cameraman", canny_edge_detection)
+cv2.imshow("T3b+ Canny Dilated BuiltIn Cameraman", dilated_edges_of_Canny)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
+cv2.imwrite("t3b.tif", canny_edge_detection)
 
 
 
@@ -347,7 +338,6 @@ def group_adjacent(edge_map):
 
     currentLabel = 2
     queue = []
-    newLabels = []
 
     #1, -1 to avoid collisions (outside the array) right now
     for x in range(1, len(label_edge_map)-1):
@@ -390,7 +380,6 @@ def group_adjacent(edge_map):
                 elif j - 1 <= 0:
                     above = label_edge_map[i - 1][j]
                     right = label_edge_map[i][j+1] 
-
 
 
                 #If a neighbor is a foreground pixel and not already labeled give it the curlab label and add it to the queue
@@ -451,15 +440,24 @@ def group_adjacent(edge_map):
                 newRow.append(255)
         final_label_edge_map.append(newRow)
     final_label_edge_map = np.array(final_label_edge_map)
+
+
     return np.uint8(final_label_edge_map)
 
 
 canny_grouped = group_adjacent(canny_edge_detection)
-canny_dilated_grouped = group_adjacent(dilated_edges)
+canny_dilated_grouped = group_adjacent(dilated_edges_of_Canny)
 marr_Hildreth_grouped = group_adjacent(marr_Hildreth_edge_detection)
+marr_Hildreth_Dilated_grouped = group_adjacent(dilated_edges_of_Hildreth)
 
-cv2.imshow("Canny Grouped Cameraman", canny_grouped)
-cv2.imshow("Canny Dilated Grouped Cameraman", canny_dilated_grouped)
-cv2.imshow("Marr-Hildreth Grouped Cameraman", marr_Hildreth_grouped)
+
+cv2.imshow("T4b Canny Grouped Cameraman", canny_grouped)
+cv2.imshow("T4b+ Canny Dilated Grouped Cameraman", canny_dilated_grouped)
+cv2.imshow("T4a Marr-Hildreth Grouped Cameraman", marr_Hildreth_grouped)
+cv2.imshow("T4a+ Marr-Hildreth Grouped Cameraman", marr_Hildreth_Dilated_grouped)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+cv2.imwrite("t4b.tif", marr_Hildreth_grouped)
+cv2.imwrite("t4a.tif", canny_grouped)
+
+
