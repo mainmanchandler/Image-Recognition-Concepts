@@ -32,12 +32,12 @@ def average_smoothing_filter(matrix):
         row = matrix[i]
         newRow = []
         if i < 2 or i >= m-2:
-            resultAverage.append(row/DIV)
+            resultAverage.append(row/512)
         else:
             for j in range(0, len(row)):
                 
                 if j < 2 or j >= n-2:
-                    newRow.append(matrix[i, j]/DIV)
+                    newRow.append(matrix[i, j]/512)
                 else:
                     #"simply the average of the pixels contained in a neighborhood"
                     # so I want to recreate this:
@@ -46,7 +46,7 @@ def average_smoothing_filter(matrix):
                     # f(x+1,y-1)  f(x+1,y)  f(x+1,y+1)
                     average = (( matrix[i-1, j-1]/9 + matrix[i-1, j]/9 + matrix[i-1, j+1]/9 + 
                                  matrix[i, j-1]/9   + matrix[i, j]/9   + matrix[i, j+1]/9   + 
-                                 matrix[i+1, j-1]/9 + matrix[i+1, j]/9 + matrix[i+1, j+1]/9 ) ) /DIV
+                                 matrix[i+1, j-1]/9 + matrix[i+1, j]/9 + matrix[i+1, j+1]/9 ) ) /512
                     
                     #print(average)
 
