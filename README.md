@@ -1,1 +1,1 @@
-Code for My Image Processing and Recognition Class.
+Code for My Image Recognition and Processing course.
